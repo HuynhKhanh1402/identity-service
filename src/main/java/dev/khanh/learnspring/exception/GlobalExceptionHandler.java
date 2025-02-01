@@ -8,6 +8,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.util.Objects;
+
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -33,7 +35,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<ApiResponse<Void>> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
-        String enumKey = e.getFieldError().getDefaultMessage();
+        String enumKey = Objects.requireNonNull(e.getFieldError()).getDefaultMessage();
 
         ErrorCode errorCode = ErrorCode.INVALID_KEY;
         try {
@@ -52,7 +54,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AuthorizationDeniedException.class)
-    ResponseEntity<ApiResponse<Void>> authorizationDeniedExceptionHandler(AuthorizationDeniedException e) {
+    ResponseEntity<ApiResponse<Void>> authorizationDeniedExceptionHandler(AuthorizationDeniedException ignoredE) {
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
         return ResponseEntity
                 .status(errorCode.getStatusCode())
