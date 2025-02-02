@@ -2,7 +2,6 @@ package dev.khanh.learnspring.controller;
 
 import dev.khanh.learnspring.dto.request.ApiResponse;
 import dev.khanh.learnspring.dto.request.RoleRequest;
-import dev.khanh.learnspring.dto.respone.PermissionResponse;
 import dev.khanh.learnspring.dto.respone.RoleResponse;
 import dev.khanh.learnspring.service.RoleService;
 import lombok.AccessLevel;
