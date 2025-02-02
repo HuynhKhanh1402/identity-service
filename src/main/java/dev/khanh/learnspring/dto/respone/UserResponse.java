@@ -1,6 +1,5 @@
 package dev.khanh.learnspring.dto.respone;
 
-import dev.khanh.learnspring.entity.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -18,5 +17,5 @@ public class UserResponse {
     String firstName;
     String lastName;
     LocalDate dob;
-    Set<Role> roles;
+    Set<RoleResponse> roles;
 }

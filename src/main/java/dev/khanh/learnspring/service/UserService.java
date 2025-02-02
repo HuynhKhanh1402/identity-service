@@ -8,6 +8,7 @@ import dev.khanh.learnspring.enums.Role;
 import dev.khanh.learnspring.exception.AppException;
 import dev.khanh.learnspring.exception.ErrorCode;
 import dev.khanh.learnspring.mapper.UserMapper;
+import dev.khanh.learnspring.repository.RoleRepository;
 import dev.khanh.learnspring.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService {
     UserRepository userRepository;
+    RoleRepository roleRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
@@ -48,7 +50,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('APPROVE_POST')")
     public List<User> getUsers() {
         log.info("In method getUsers");
         return userRepository.findAll();
@@ -66,6 +68,12 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         userMapper.updateUser(user, request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        List<dev.khanh.learnspring.entity.Role> roles = roleRepository.findAllById(request.getRoles());
+        user.setRoles(new HashSet<>(roles));
+
+        userRepository.save(user);
 
         return userMapper.toUserResponse(user);
     }
