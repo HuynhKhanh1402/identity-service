@@ -1,5 +1,6 @@
 package dev.khanh.learnspring.dto.request;
 
+import dev.khanh.learnspring.validator.DobConstraint;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -16,5 +17,6 @@ public class UserUpdateRequest {
     String firstName;
     String lastName;
     LocalDate dob;
+    @DobConstraint(min = 18, message = "INVALID_DOB")
     List<String> roles;
 }
