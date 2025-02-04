@@ -2,8 +2,9 @@ package dev.khanh.learnspring.configuration;
 
 import com.nimbusds.jose.JOSEException;
 import dev.khanh.learnspring.dto.request.IntrospectRequest;
+import dev.khanh.learnspring.dto.respone.IntrospectResponse;
 import dev.khanh.learnspring.service.AuthenticationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -16,12 +17,12 @@ import javax.crypto.spec.SecretKeySpec;
 import java.text.ParseException;
 
 @Component
+@RequiredArgsConstructor
 public class CustomJWTDecoder implements JwtDecoder {
     @Value("${jwt.signerKey}")
     private String signerKey;
 
-    @Autowired
-    private AuthenticationService authenticationService;
+    private final AuthenticationService authenticationService;
 
     private NimbusJwtDecoder nimbusJwtDecoder = null;
 
@@ -29,12 +30,15 @@ public class CustomJWTDecoder implements JwtDecoder {
     @Override
     public Jwt decode(String token) throws JwtException {
         try {
-            authenticationService.introspect(
+            IntrospectResponse introspect = authenticationService.introspect(
                     IntrospectRequest
                             .builder()
                             .token(token)
                             .build()
             );
+            if (!introspect.isValid()) {
+                throw new JwtException("Token is invalid");
+            }
         } catch (JOSEException | ParseException e) {
             throw new RuntimeException(e);
         }
