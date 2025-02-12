@@ -1,10 +1,7 @@
 package dev.khanh.learnspring.controller;
 
 import com.nimbusds.jose.JOSEException;
-import dev.khanh.learnspring.dto.request.ApiResponse;
-import dev.khanh.learnspring.dto.request.AuthenticationRequest;
-import dev.khanh.learnspring.dto.request.IntrospectRequest;
-import dev.khanh.learnspring.dto.request.LogoutRequest;
+import dev.khanh.learnspring.dto.request.*;
 import dev.khanh.learnspring.dto.respone.IntrospectResponse;
 import dev.khanh.learnspring.dto.respone.AuthenticationResponse;
 import dev.khanh.learnspring.service.AuthenticationService;
@@ -44,5 +41,14 @@ public class AuthenticationController {
     public ApiResponse<Void> logout(@RequestBody LogoutRequest logoutRequest) throws ParseException, JOSEException {
         authenticationService.logout(logoutRequest);
         return ApiResponse.<Void>builder().build();
+    }
+
+    @PostMapping("/refresh")
+    public ApiResponse<AuthenticationResponse> refresh(@RequestBody RefreshRequest request) throws ParseException, JOSEException {
+        AuthenticationResponse response = authenticationService.refreshToken(request);
+        return ApiResponse
+                .<AuthenticationResponse>builder()
+                .result(response)
+                .build();
     }
 }
